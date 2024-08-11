@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Management: Relax & Play</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e6f3ff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        h1 {
+            color: #4a90e2;
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 45%;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background-color: #87ceeb;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 55px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #breathing-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: white;
+            transition: all 4s ease-in-out;
+            background-color: #4a90e2;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3a7bc8;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #stopwatch, #score {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #4a90e2;
+        }
+        footer {
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stress Management: Relax & Play</h1>
+    <div class="container" id="main-container">
+        <div class="section" id="breathing-section">
+            <h2>Relaxation Exercise</h2>
+            <button id="startBreathing">Start Breathing Exercise</button>
+        </div>
+        <div class="section" id="game-section">
+            <h2>Balloon Popping Game</h2>
+            <button id="startGame">Start Balloon Game</button>
+        </div>
+    </div>
+
+    <div id="breathing-exercise" style="display: none;">
+        <div id="breathing-circle">Breathe</div>
+        <div id="breathingStopwatch">Time: 00:00</div>
+        <button id="stopBreathing">Stop Exercise</button>
+    </div>
+
+    <div id="balloon-game" style="display: none;">
+        <div id="game-container"></div>
+        <p id="score">Score: 0</p>
+        <div id="gameStopwatch">Time: 00:00</div>
+        <button id="stopGame">Stop Game</button>
+    </div>
+
+    <footer>
+        <p>Developed by Dr. Archit Mehta</p>
+    </footer>
+
+    <script>
+        // Main container and sections
+        const mainContainer = document.getElementById('main-container');
+        const breathingSection = document.getElementById('breathing-section');
+        const gameSection = document.getElementById('game-section');
+
+        // Breathing Exercise
+        const breathingExercise = document.getElementById('breathing-exercise');
+        const breathingCircle = document.getElementById('breathing-circle');
+        const startBreathingBtn = document.getElementById('startBreathing');
+        const stopBreathingBtn = document.getElementById('stopBreathing');
+        const breathingStopwatch = document.getElementById('breathingStopwatch');
+        let isBreathing = false;
+        let breathingInterval;
+        let breathingSeconds = 0;
+
+        startBreathingBtn.addEventListener('click', startBreathing);
+        stopBreathingBtn.addEventListener('click', stopBreathing);
+
+        function startBreathing() {
+            mainContainer.style.display = 'none';
+            breathingExercise.style.display = 'block';
+            isBreathing = true;
+            breathingSeconds = 0;
+            updateBreathingStopwatch();
+            breathingInterval = setInterval(updateBreathingStopwatch, 1000);
+            breatheIn();
+        }
+
+        function stopBreathing() {
+            isBreathing = false;
+            clearInterval(breathingInterval);
+            breathingCircle.style.backgroundColor = '#4a90e2';
+            breathingCircle.textContent = 'Breathe';
+            breathingCircle.style.transform = 'scale(1)';
+            breathingExercise.style.display = 'none';
+            mainContainer.style.display = 'flex';
+            window.location.href = "https://forms.gle/6US7EZe1BvDy7y9TA";
+        }
+
+        function breatheIn() {
+            if (!isBreathing) return;
+            breathingCircle.textContent = 'Breathe In';
+            breathingCircle.style.backgroundColor = '#4a90e2';
+            breathingCircle.style.transform = 'scale(1.2)';
+            setTimeout(holdBreath, 4000);
+        }
+
+        function holdBreath() {
+            if (!isBreathing) return;
+            breathingCircle.textContent = 'Hold';
+            breathingCircle.style.backgroundColor = '#ffa500';
+            setTimeout(breatheOut, 4000);
+        }
+
+        function breatheOut() {
+            if (!isBreathing) return;
+            breathingCircle.textContent = 'Breathe Out';
+            breathingCircle.style.backgroundColor = '#66cdaa';
+            breathingCircle.style.transform = 'scale(1)';
+            setTimeout(breatheIn, 4000);
+        }
+
+        function updateBreathingStopwatch() {
+            breathingSeconds++;
+            const minutes = Math.floor(breathingSeconds / 60);
+            const seconds = breathingSeconds % 60;
+            breathingStopwatch.textContent = `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Balloon Popping Game
+        const balloonGame = document.getElementById('balloon-game');
+        const gameContainer = document.getElementById('game-container');
+        const scoreDisplay = document.getElementById('score');
+        const gameStopwatch = document.getElementById('gameStopwatch');
+        const startGameBtn = document.getElementById('startGame');
+        const stopGameBtn = document.getElementById('stopGame');
+
+        let score = 0;
+        let balloonInterval;
+        let gameSeconds = 0;
+        let gameInterval;
+
+        startGameBtn.addEventListener('click', startGame);
+        stopGameBtn.addEventListener('click', stopGame);
+
+        function startGame() {
+            mainContainer.style.display = 'none';
+            balloonGame.style.display = 'block';
+            score = 0;
+            gameSeconds = 0;
+            scoreDisplay.textContent = `Score: ${score}`;
+            balloonInterval = setInterval(createBalloon, 1000);
+            gameInterval = setInterval(updateGameStopwatch, 1000);
+        }
+
+        function stopGame() {
+            clearInterval(balloonInterval);
+            clearInterval(gameInterval);
+            balloonInterval = null;
+            balloonGame.style.display = 'none';
+            mainContainer.style.display = 'flex';
+            window.location.href = "https://forms.gle/6US7EZe1BvDy7y9TA";
+        }
+
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.classList.add('balloon');
+            balloon.style.left = Math.random() * (gameContainer.clientWidth - 40) + 'px';
+            balloon.style.bottom = '0px';
+            balloon.style.backgroundColor = getRandomColor();
+            gameContainer.appendChild(balloon);
+
+            let riseInterval = setInterval(() => {
+                balloon.style.bottom = parseInt(balloon.style.bottom) + 2 + 'px';
+                if (parseInt(balloon.style.bottom) > gameContainer.clientHeight) {
+                    clearInterval(riseInterval);
+                    gameContainer.removeChild(balloon);
+                }
+            }, 20);
+
+            balloon.addEventListener('click', () => {
+                clearInterval(riseInterval);
+                gameContainer.removeChild(balloon);
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+            });
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function updateGameStopwatch() {
+            gameSeconds++;
+            const minutes = Math.floor(gameSeconds / 60);
+            const seconds = gameSeconds % 60;
+            gameStopwatch.textContent = `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
